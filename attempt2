@@ -76,3 +76,26 @@ def ctrlC(signum, frame):
 
 # Attach the Ctrl+C signal interrupt
 signal.signal(signal.SIGINT, ctrlC)
+print("Testing the Servos, Each wheel should spin in both direction")
+i = 0
+while i < 1:
+    # Write a maximum value of 1.7 for each servo.
+    # Since the servos are oriented in opposite directions,
+    # the robot will end up spinning in one direction.
+    # Values between 1.3 and 1.7 should be used.
+    pwm.set_pwm(LSERVO, 0, math.floor(1.6 / 20 * 4096));
+    pwm.set_pwm(RSERVO, 0, math.floor(1.6 / 20 * 4096));
+    time.sleep(4)
+    
+    # Write a minimum value of 1.4 for each servo.
+    # The robot will end up spinning in the other direction.
+    pwm.set_pwm(LSERVO, 0, math.floor(1.4 / 20 * 4096));
+    pwm.set_pwm(RSERVO, 0, math.floor(1.4 / 20 * 4096));
+    time.sleep(4)
+    i= i+1
+
+# Stop the servos
+pwm.set_pwm(LSERVO, 0, 0);
+pwm.set_pwm(RSERVO, 0, 0);
+
+exit()
