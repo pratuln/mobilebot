@@ -1,0 +1,78 @@
+import time
+import Adafruit_PCA9685
+import signal
+import math
+import time
+import RPi.GPIO as GPIO # README: https://pypi.org/project/RPi.GPIO/ 
+import signal
+
+
+#encoder setup
+def onLeftEncode(pin):
+    global lencoder_count
+    lencoder_count += 1
+    
+    
+
+# This function is called when the right encoder detects a rising edge signal.
+def onRightEncode(pin):
+    global rencoder_count
+    rencoder_count += 1
+
+# Pins that the encoders are connected to
+LENCODER = 17
+RENCODER = 18
+# Set the pin numbering scheme to the numbering shown on the robot itself.
+GPIO.setmode(GPIO.BCM)
+
+# Set encoder pins as input
+# Also enable pull-up resistors on the encoder pins
+# This ensures a clean 0V and 3.3V is always outputted from the encoders.
+GPIO.setup(LENCODER, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(RENCODER, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+# Attach a rising edge interrupt to the encoder pins
+GPIO.add_event_detect(LENCODER, GPIO.RISING, onLeftEncode)
+GPIO.add_event_detect(RENCODER, GPIO.RISING, onRightEncode)
+
+    
+#encoder disruption
+def ctrlC(signum, frame):
+    print("Exiting")
+    
+    # Stop the servos
+    pwm.set_pwm(LSERVO, 0, 0);
+    pwm.set_pwm(RSERVO, 0, 0);
+    
+    exit()
+
+# Attach the Ctrl+C signal interrupt
+signal.signal(signal.SIGINT, ctrlC)
+
+
+
+
+#servo setup
+# Initialize the servo hat library.
+pwm = Adafruit_PCA9685.PCA9685()
+
+# 50Hz is used for the frequency of the servos.
+pwm.set_pwm_freq(50)
+
+LSERVO = 0
+RSERVO = 1
+# Write an initial value of 1.5, which keeps the servos stopped.
+pwm.set_pwm(LSERVO, 0, math.floor(1.5 / 20 * 4096));
+pwm.set_pwm(RSERVO, 0, math.floor(1.5 / 20 * 4096));
+#servo disruption
+def ctrlC(signum, frame):
+    print("Exiting")
+    
+    # Stop the servos
+    pwm.set_pwm(LSERVO, 0, 0);
+    pwm.set_pwm(RSERVO, 0, 0);
+    
+    exit()
+
+# Attach the Ctrl+C signal interrupt
+signal.signal(signal.SIGINT, ctrlC)
